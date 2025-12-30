@@ -1,0 +1,143 @@
+
+
+--- Page 1 ---
+
+CPC357: IoT Architecture & Smart Applications
+Project
+Group Members:
+1. Name: Matric No. :
+2. Name: Matric No. :
+3. Name: Matric No. :
+You are required to develop a practical IoT system addressing real-world urban challenges
+while contributing to UN Sustainable Development Goal (SDG) 11 – Smart Cities. This project
+integrates theoretical knowledge with hands-on implementation, culminating in a working
+prototype, visualization application, and comprehensive documentation.
+Project Objectives
+1. Design and implement a functional IoT system for smart city applications
+2. Demonstrate practical understanding of IoT architecture
+3. Apply cloud computing and data analytics concepts
+4. Visualize sensor data through web or mobile applications
+Technical Requirements
+Hardware
+You may use any suitable hardware platform including:
+• Raspberry Pi
+• Maker Feather S3
+• Any appropriate microcontroller with sensors
+Justify your choice of sensors based on your smart city application
+Cloud Platform
+You may choose any cloud platform including:
+• AWS (Amazon Web Services)
+• GCP (Google Cloud Platform)
+• Other suitable cloud platforms
+1
+
+--- Page 2 ---
+
+Data Visualization
+Develop a web or mobile application to visualize sensor data. The visualization must clearly
+demonstrate real-time or historical data from your IoT system
+The core requirement is successful integration between your chosen hardware and cloud
+platform, demonstrating a complete IoT system with data collection, processing, and
+visualization capabilities.
+Deliverables
+You must submit a comprehensive technical report containing the following:
+1. System architecture
+• Detailed architecture diagram of your IoT system
+• Component descriptions and their interactions
+2. Hardware Documentation
+• List of sensors and hardware components used
+• Justification for sensor selection based on your smart city application
+• Hardware setup and configuration guide
+3. SDG 11 Impact Analysis
+• How your system addresses smart city challenges
+• Potential real-world impact
+4. GitHub/GitLab Repository Link
+• Link to your source code repository
+• Your repository must include:
+o All source code files
+o Comprehensive README file with project description
+o Setup and installation instructions
+o List of dependencies and requirements
+5. YouTube Video Link
+• Link to your demonstration video (public or unlisted)
+• The video must demonstrate:
+o System overview and architecture
+o Live demonstration of the working prototype
+o Data visualization (web/mobile application)
+Submission Instructions
+• This is a group submission – submit ONE technical report per group
+• Upload the technical report to eLEARN@USM
+• Marks will be deducted if:
+o Repository link and/or YouTube video link are not included in the report
+o Links are broken, incorrect, or inaccessible
+• Verify that your links are correct and accessible before submission
+2
+
+--- Page 3 ---
+
+• Email submissions of links will NOT be accepted – all links must be included in the PDF
+report
+⚠ IMPORTANT: Your IoT system implementation must be your own original work.
+• Do not copy existing projects from the internet.
+• Do not duplicate another student's work.
+• While you can use online resources for learning, your implementation must be unique.
+• Any form of plagiarism will result in serious academic consequences.
+Assignment Due Date: 11 January 2026, 11pm (MY time)
+All projects MUST be submitted before/on the given date. Late submissions will NOT be
+entertained.
+Plagiarism/pirating and copying are serious academic offence. Students that are found to
+plagiarize/or copying will get an F for the assignment/report or for the whole coursework
+grade.
+Thank you
+3
+
+--- Page 4 ---
+
+GRADING RUBRICS:
+Criteria Weight Excellent Sufficient Fair Poor
+(70-100%) (52-69%) (36-51%) (0-35%)
+Student presents a well- Student provides sufficient Student presents basic Student presents
+developed IoT system with information on system system architecture, inadequate system design,
+clear architecture, architecture, sensor limited sensor justification, weak or no sensor
+IoT system
+appropriate sensor selection with adequate basic hardware-cloud justification, poor
+design concepts,
+40% selection with strong justification, functional integration, and simple hardware-cloud
+plan and
+justification, seamless hardware-cloud data visualization. integration, and minimal or
+implementation
+hardware-cloud integration, and working non-functional data
+integration, and effective data visualization. visualization.
+data visualization.
+Comprehensive technical Clear technical report with Basic technical report with Incomplete or unclear
+report with clear adequate architecture simple diagrams, limited documentation, missing
+architecture diagrams, diagrams, sufficient hardware documentation, diagrams, poor code
+detailed hardware hardware documentation, basic source code organization, missing
+Technical documentation, well- organized source code with organization. Some links README, or inaccessible /
+30%
+Documentation organized source code with README, and accessible may be missing or unclear. missing repository and
+complete README, and repository. Links included video links.
+accessible GitHub/GitLab and functional.
+repository. All links
+included and functional.
+Highly innovative solution Original approach Standard implementation Minimal creativity with
+with clear, significant addressing smart city with basic connection to weak or unclear
+impact on smart city challenges with moderate smart city challenges and connection to smart city
+SDG 11 Impact
+15% challenges. Strong innovation. Clear SDG 11. Limited challenges and SDG 11.
+and Innovation
+alignment with SDG 11 connection to SDG 11 with innovation.
+goals and demonstrable practical applications.
+real-world applicability.
+4
+
+--- Page 5 ---
+
+Clear, professional, and Clear and effective Basic demonstration with Unclear demonstration
+engaging demonstration demonstration covering acceptable quality showing with poor quality, missing
+showcasing system system functionality, data main system features. May key components, or video
+Presentation 15% overview, live prototype visualization, and SDG 11 exceed time limit or lack link not provided /
+functionality, data connection within time clarity. inaccessible.
+visualization, and SDG 11 limit.
+impact within time limit.
+5

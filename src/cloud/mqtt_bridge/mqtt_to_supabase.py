@@ -49,8 +49,7 @@ def check_thresholds(data):
                     'value': value,
                     'threshold_min': min_val,
                     'threshold_max': max_val,
-                    'severity': severity,
-                    'message': f"Automated Control Triggered: {param} ({value}) outside bounds ({min_val}-{max_val})"
+                    'severity': severity
                 }).execute()
                 
                 print(f"⚠️  ALERT TRIGGERED: {param} = {value} (Limits: {min_val}-{max_val}) | Severity: {severity.upper()}")

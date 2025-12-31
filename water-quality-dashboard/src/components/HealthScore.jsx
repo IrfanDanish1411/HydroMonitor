@@ -1,47 +1,110 @@
-import { Activity, CheckCircle, AlertTriangle, TrendingUp } from 'lucide-react'
+import { Activity, CheckCircle, AlertTriangle, X } from 'lucide-react'
+import { isInRange } from '../lib/utils'
 import './HealthScore.css'
 
+const PARAMETER_ICONS = {
+    temperature: '🌡️',
+    ph: '⚗️',
+    dissolved_oxygen: '💨',
+    ammonia: '🧪',
+    salinity: '🧂'
+}
+
+const PARAMETER_LABELS = {
+    temperature: 'Temp',
+    ph: 'pH',
+    dissolved_oxygen: 'DO',
+    ammonia: 'NH₃',
+    salinity: 'Sal'
+}
+
 export default function HealthScore({ readings, alerts }) {
-    // Calculate health score based on multiple factors
+    // Calculate weighted health score with parameter breakdown
     const calculateHealthScore = () => {
-        if (!readings || readings.length === 0) return 0
-
-        let score = 100
-        const latestReading = readings[0]
-
-        // Deduct points for out-of-range parameters (Test Mode thresholds)
-        const thresholds = {
-            temperature: { min: 0, max: 100 },
-            ph: { min: 0, max: 14 },
-            dissolved_oxygen: { min: 0, max: 20 },
-            ammonia: { min: 0, max: 50 },
-            salinity: { min: 0, max: 50 }
+        if (!readings || readings.length === 0) {
+            return {
+                totalScore: 0,
+                parameters: {},
+                issues: []
+            }
         }
 
-        Object.keys(thresholds).forEach(param => {
-            const value = latestReading[param]
-            const { min, max } = thresholds[param]
+        const latestReading = readings[0]
+        const parameters = ['temperature', 'ph', 'dissolved_oxygen', 'ammonia', 'salinity']
 
-            if (value < min || value > max) {
-                score -= 15
+        // Weight for each parameter (critical = high weight)
+        const weights = {
+            temperature: 25,    // Critical for fish metabolism
+            dissolved_oxygen: 25, // Critical for survival
+            ammonia: 20,        // Very important (toxic)
+            ph: 15,             // Important
+            salinity: 15        // Important
+        }
+
+        let totalScore = 0
+        let parametersStatus = {}
+        let issues = []
+
+        parameters.forEach(param => {
+            const value = latestReading[param]
+            const weight = weights[param]
+
+            // Check if in range using existing utility
+            const inRange = isInRange(value, param, latestReading.test_mode)
+
+            if (inRange) {
+                // Full points for this parameter
+                totalScore += weight
+                parametersStatus[param] = {
+                    status: 'ok',
+                    weight: weight,
+                    score: weight
+                }
+            } else {
+                // Reduced points based on severity
+                const alerts = getAlertsForParameter(param)
+                const severity = alerts[0]?.severity || 'medium'
+
+                let scoreFactor = 0
+                if (severity === 'low') scoreFactor = 0.8
+                else if (severity === 'medium' || severity === 'warning') scoreFactor = 0.5
+                else if (severity === 'high') scoreFactor = 0
+
+                const earnedScore = Math.round(weight * scoreFactor)
+                totalScore += earnedScore
+
+                parametersStatus[param] = {
+                    status: 'issue',
+                    severity: severity,
+                    weight: weight,
+                    score: earnedScore
+                }
+
+                issues.push({
+                    parameter: param,
+                    severity: severity,
+                    label: PARAMETER_LABELS[param]
+                })
             }
         })
 
-        // Deduct points for active alerts
-        const alertPenalty = {
-            high: 10,
-            medium: 5,
-            warning: 2
+        // Additional penalty for pending alerts
+        const alertPenalty = Math.min(alerts.length * 2, 10)
+        totalScore = Math.max(0, totalScore - alertPenalty)
+
+        return {
+            totalScore: Math.round(totalScore),
+            parameters: parametersStatus,
+            issues: issues
         }
-
-        alerts.forEach(alert => {
-            score -= alertPenalty[alert.severity] || 2
-        })
-
-        return Math.max(0, Math.min(100, score))
     }
 
-    const score = calculateHealthScore()
+    const getAlertsForParameter = (parameter) => {
+        return alerts.filter(alert => alert.parameter === parameter)
+    }
+
+    const healthData = calculateHealthScore()
+    const score = healthData.totalScore
 
     const getScoreColor = () => {
         if (score >= 80) return 'excellent'
@@ -53,12 +116,19 @@ export default function HealthScore({ readings, alerts }) {
     const getScoreLabel = () => {
         if (score >= 80) return 'Excellent'
         if (score >= 60) return 'Good'
-        if (score >= 40) return 'Fair'
-        return 'Poor'
+        if (score >= 40) return 'Degraded'
+        return 'Critical'
+    }
+
+    const getScoreIcon = () => {
+        if (score >= 80) return '✅'
+        if (score >= 60) return '⚠️'
+        return '🔴'
     }
 
     const scoreColor = getScoreColor()
     const scoreLabel = getScoreLabel()
+    const scoreIcon = getScoreIcon()
 
     return (
         <div className={`health-score card ${scoreColor}`}>
@@ -96,17 +166,48 @@ export default function HealthScore({ readings, alerts }) {
                     </div>
                 </div>
                 <div className="health-status">
-                    <span className={`status-label ${scoreColor}`}>{scoreLabel}</span>
-                    <div className="health-stats">
-                        <div className="stat">
-                            <CheckCircle size={14} />
-                            <span>{5 - alerts.length} OK</span>
-                        </div>
-                        <div className="stat">
-                            <AlertTriangle size={14} />
-                            <span>{alerts.length} Issues</span>
+                    <span className={`status-label ${scoreColor}`}>
+                        <span className="status-icon">{scoreIcon}</span>
+                        {scoreLabel}
+                    </span>
+
+                    {/* Parameter Breakdown */}
+                    <div className="parameters-breakdown">
+                        <div className="breakdown-title">Parameters</div>
+                        <div className="breakdown-grid">
+                            {Object.entries(healthData.parameters).map(([param, data]) => (
+                                <div key={param} className={`param-item ${data.status}`}>
+                                    <span className="param-icon-small">{PARAMETER_ICONS[param]}</span>
+                                    <span className="param-label">{PARAMETER_LABELS[param]}</span>
+                                    {data.status === 'ok' ? (
+                                        <CheckCircle size={16} className="status-check" />
+                                    ) : (
+                                        <X size={16} className="status-cross" />
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     </div>
+
+                    {/* Issues List */}
+                    {healthData.issues.length > 0 && (
+                        <div className="health-issues">
+                            <div className="issues-title">
+                                <AlertTriangle size={14} />
+                                Issues ({healthData.issues.length})
+                            </div>
+                            <div className="issues-list text-center">
+                                <span className="text-sm font-semibold text-red-400">
+                                    Attention: {healthData.issues.map(i => i.label).join(', ')}
+                                </span>
+                            </div>
+                            {alerts.length > 0 && (
+                                <div className="pending-alerts">
+                                    • {alerts.length} alert{alerts.length > 1 ? 's' : ''} pending
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

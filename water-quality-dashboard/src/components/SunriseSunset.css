@@ -58,6 +58,8 @@
 .sun-times {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
     padding: var(--spacing-lg);

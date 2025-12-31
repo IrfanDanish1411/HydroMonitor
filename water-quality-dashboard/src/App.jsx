@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Droplet, Thermometer, Activity, Waves, FlaskConical, TestTube, Bell, BellOff, Moon, Sun } from 'lucide-react'
+import { Droplet, Thermometer, Activity, Waves, FlaskConical, TestTube, Bell, BellOff, Moon, Sun, Settings, LayoutDashboard, ClipboardCheck, RefreshCw, BookOpen } from 'lucide-react'
 import MetricCard from './components/MetricCard'
 import SensorChart from './components/SensorChart'
+import Chart from './components/Chart'
 import AlertPanel from './components/AlertPanel'
 import DataExport from './components/DataExport'
 import HealthScore from './components/HealthScore'
@@ -9,9 +10,15 @@ import WeatherWidget from './components/WeatherWidget'
 import SunriseSunset from './components/SunriseSunset'
 import LocationMap from './components/LocationMap'
 import PWAPrompt from './components/PWAPrompt'
+import LandingPage from './components/LandingPage'
+import Documentation from './components/Documentation'
+import ThresholdManager from './components/ThresholdManager'
+import DailyChecklist from './components/DailyChecklist'
+import MaintenanceSchedule from './components/MaintenanceSchedule'
 import { getLatestReadings, getActiveAlerts, subscribeToSensorData, subscribeToAlerts } from './lib/supabase'
-import { formatRelativeTime } from './lib/utils'
+import { formatRelativeTime, generateActiveAlerts } from './lib/utils'
 import './App.css'
+
 
 function App() {
   const [readings, setReadings] = useState([])
@@ -19,10 +26,13 @@ function App() {
   const [alerts, setAlerts] = useState([])
   const [loading, setLoading] = useState(true)
   const [lastUpdate, setLastUpdate] = useState(null)
-  const [testMode, setTestMode] = useState(true) // Start in test mode for calibration
+  const [testMode, setTestMode] = useState(false) // Start in production mode
   const [autoRefresh, setAutoRefresh] = useState(30) // Auto-refresh interval in seconds
   const [showAlerts, setShowAlerts] = useState(false) // Alert panel minimized by default
   const [darkMode, setDarkMode] = useState(true) // Dark mode toggle
+  const [activeTab, setActiveTab] = useState('overview') // Tab navigation: overview, settings, operations
+  const [showLanding, setShowLanding] = useState(true) // Show landing page on first load
+  const [showDocs, setShowDocs] = useState(false) // Show documentation modal
 
 
   // Fetch initial data
@@ -41,13 +51,18 @@ function App() {
           setReadings(readingsData)
           setLatestReading(readingsData[0])
           setLastUpdate(new Date(readingsData[0].timestamp))
+
+          // Generate alerts client-side based on latest reading
+          const currentAlerts = generateActiveAlerts(readingsData[0], testMode)
+          setAlerts(currentAlerts)
         } else {
           console.warn('No sensor readings found in database')
+          setAlerts([])
         }
-
-        setAlerts(alertsData || [])
       } catch (error) {
         console.error('Error fetching data:', error)
+        setReadings([])
+        setAlerts([])
       } finally {
         setLoading(false)
       }
@@ -56,29 +71,42 @@ function App() {
     fetchData()
   }, [])
 
-  // Subscribe to real-time updates
+  // Toggle theme class on body
   useEffect(() => {
-    const sensorChannel = subscribeToSensorData((payload) => {
-      const newReading = payload.new
-      setReadings(prev => [newReading, ...prev].slice(0, 50))
-      setLatestReading(newReading)
-      setLastUpdate(new Date())
+    if (darkMode) {
+      document.body.classList.remove('light-mode')
+    } else {
+      document.body.classList.add('light-mode')
+    }
+  }, [darkMode])
+
+  // Set up real-time subscriptions
+  useEffect(() => {
+    console.log('Setting up real-time subscriptions...')
+
+    const sensorSubscription = subscribeToSensorData((payload) => {
+      console.log('Sensor reading received:', payload.new)
+      setReadings(prev => [payload.new, ...prev.slice(0, 49)])
+      setLatestReading(payload.new)
+      setLastUpdate(new Date(payload.new.timestamp))
+
+      // Update alerts based on new reading
+      const newAlerts = generateActiveAlerts(payload.new, testMode)
+      setAlerts(newAlerts)
     })
 
-    const alertChannel = subscribeToAlerts((payload) => {
-      const newAlert = payload.new
-      setAlerts(prev => [newAlert, ...prev])
-    })
-
+    // Cleanup subscriptions on unmount
     return () => {
-      sensorChannel.unsubscribe()
-      alertChannel.unsubscribe()
+      console.log('Cleaning up subscriptions...')
+      if (sensorSubscription) {
+        sensorSubscription.unsubscribe()
+      }
     }
   }, [])
 
-  // Auto-refresh data
+  // Auto-refresh
   useEffect(() => {
-    if (!autoRefresh) return
+    if (autoRefresh === 0) return
 
     const interval = setInterval(async () => {
       try {
@@ -86,13 +114,15 @@ function App() {
           getLatestReadings(50),
           getActiveAlerts()
         ])
-
         if (readingsData && readingsData.length > 0) {
           setReadings(readingsData)
           setLatestReading(readingsData[0])
-          setLastUpdate(new Date(readingsData[0].timestamp))
+          setLastUpdate(new Date())
+
+          // Refresh alerts based on latest
+          const currentAlerts = generateActiveAlerts(readingsData[0], testMode)
+          setAlerts(currentAlerts)
         }
-        setAlerts(alertsData || [])
       } catch (error) {
         console.error('Auto-refresh error:', error)
       }
@@ -101,21 +131,14 @@ function App() {
     return () => clearInterval(interval)
   }, [autoRefresh])
 
-  // Dark mode effect
-  useEffect(() => {
-    document.body.classList.toggle('dark-mode', darkMode)
-  }, [darkMode])
-
-  // Handle alert dismissal
-  const handleDismissAlert = (alertIndex) => {
-    setAlerts(prev => prev.filter((_, index) => index !== alertIndex))
+  // Alert dismissal handlers
+  const handleDismissAlert = (index) => {
+    setAlerts(prev => prev.filter((_, i) => i !== index))
   }
 
-  // Handle dismiss all alerts
   const handleDismissAllAlerts = () => {
     setAlerts([])
   }
-
 
   if (loading) {
     return (
@@ -126,6 +149,11 @@ function App() {
     )
   }
 
+  // Show landing page first
+  if (showLanding) {
+    return <LandingPage onEnterDashboard={() => setShowLanding(false)} />
+  }
+
   return (
     <div className="app">
       <header className="header">
@@ -133,13 +161,39 @@ function App() {
           <div className="header-title">
             <Droplet size={32} className="header-icon" />
             <div>
-              <h1>Water Quality Monitor</h1>
+              <h1>HydroMonitor</h1>
               <p className="header-subtitle">IoT Aquaculture System</p>
             </div>
           </div>
+
+          {/* Navigation Pills */}
+          <nav className="header-nav">
+            <button
+              className={`nav-pill ${activeTab === 'overview' ? 'active' : ''}`}
+              onClick={() => setActiveTab('overview')}
+            >
+              <LayoutDashboard size={18} />
+              Dashboard
+            </button>
+            <button
+              className={`nav-pill ${activeTab === 'settings' ? 'active' : ''}`}
+              onClick={() => setActiveTab('settings')}
+            >
+              <Settings size={18} />
+              Thresholds
+            </button>
+            <button
+              className={`nav-pill ${activeTab === 'operations' ? 'active' : ''}`}
+              onClick={() => setActiveTab('operations')}
+            >
+              <ClipboardCheck size={18} />
+              Operations
+            </button>
+          </nav>
+
           <div className="header-actions">
             <button
-              className={`alert-toggle ${showAlerts ? 'active' : ''}`}
+              className={`action-btn ${showAlerts ? 'active' : ''}`}
               onClick={() => setShowAlerts(!showAlerts)}
               title={showAlerts ? 'Hide alerts' : 'Show alerts'}
             >
@@ -172,11 +226,19 @@ function App() {
             </button>
 
             <button
-              className="dark-mode-toggle"
+              className="action-btn"
               onClick={() => setDarkMode(!darkMode)}
               title={darkMode ? 'Light mode' : 'Dark mode'}
             >
               {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
+            <button
+              className="action-btn"
+              onClick={() => setShowDocs(true)}
+              title="Help & Documentation"
+            >
+              <BookOpen size={18} />
             </button>
 
             <div className="header-status">
@@ -194,66 +256,86 @@ function App() {
 
       <div className="dashboard-layout">
         <main className="container">
-          {/* Health Score and Weather Widgets */}
-          <div className="widgets-grid">
-            <HealthScore readings={readings} alerts={alerts} />
-            <WeatherWidget />
-            <SunriseSunset />
-            <LocationMap />
-          </div>
+          {/* OVERVIEW TAB - Dashboard */}
+          {activeTab === 'overview' && (
+            <>
+              {/* Health Score and Weather Widgets */}
+              <div className="widgets-grid">
+                <HealthScore readings={readings} alerts={alerts} />
+                <WeatherWidget />
+                <SunriseSunset />
+                <LocationMap />
+              </div>
 
-          {/* Metrics Grid */}
-          <div className="metrics-grid">
-            <MetricCard
-              label="Temperature"
-              value={latestReading?.temperature}
-              previousValue={readings[1]?.temperature}
-              parameter="temperature"
-              icon={Thermometer}
-              testMode={testMode}
-            />
-            <MetricCard
-              label="pH Level"
-              value={latestReading?.ph}
-              previousValue={readings[1]?.ph}
-              parameter="ph"
-              icon={Activity}
-              testMode={testMode}
-            />
-            <MetricCard
-              label="Dissolved Oxygen"
-              value={latestReading?.dissolved_oxygen}
-              previousValue={readings[1]?.dissolved_oxygen}
-              parameter="dissolved_oxygen"
-              icon={Waves}
-              testMode={testMode}
-            />
-            <MetricCard
-              label="Ammonia"
-              value={latestReading?.ammonia}
-              previousValue={readings[1]?.ammonia}
-              parameter="ammonia"
-              icon={FlaskConical}
-              testMode={testMode}
-            />
-            <MetricCard
-              label="Salinity"
-              value={latestReading?.salinity}
-              previousValue={readings[1]?.salinity}
-              parameter="salinity"
-              icon={Droplet}
-              testMode={testMode}
-            />
-          </div>
+              {/* Metrics Grid */}
+              <div className="metrics-grid">
+                <MetricCard
+                  label="Temperature"
+                  value={latestReading?.temperature}
+                  previousValue={readings[1]?.temperature}
+                  parameter="temperature"
+                  icon={Thermometer}
+                  testMode={testMode}
+                />
+                <MetricCard
+                  label="pH Level"
+                  value={latestReading?.ph}
+                  previousValue={readings[1]?.ph}
+                  parameter="ph"
+                  icon={Activity}
+                  testMode={testMode}
+                />
+                <MetricCard
+                  label="Dissolved Oxygen"
+                  value={latestReading?.dissolved_oxygen}
+                  previousValue={readings[1]?.dissolved_oxygen}
+                  parameter="dissolved_oxygen"
+                  icon={Waves}
+                  testMode={testMode}
+                />
+                <MetricCard
+                  label="Ammonia"
+                  value={latestReading?.ammonia}
+                  previousValue={readings[1]?.ammonia}
+                  parameter="ammonia"
+                  icon={FlaskConical}
+                  testMode={testMode}
+                />
+                <MetricCard
+                  label="Salinity"
+                  value={latestReading?.salinity}
+                  previousValue={readings[1]?.salinity}
+                  parameter="salinity"
+                  icon={Droplet}
+                  testMode={testMode}
+                />
+              </div>
 
-          {/* Individual Sensor Charts */}
-          {readings.length > 1 && (
-            <div className="charts-grid">
-              <SensorChart data={readings} parameter="temperature" testMode={testMode} />
-              <SensorChart data={readings} parameter="ph" testMode={testMode} />
-              <SensorChart data={readings} parameter="dissolved_oxygen" testMode={testMode} />
-              <SensorChart data={readings} parameter="ammonia" testMode={testMode} />
-              <SensorChart data={readings} parameter="salinity" testMode={testMode} />
+              {/* Individual Sensor Charts */}
+              {readings.length > 1 && (
+                <div className="charts-grid">
+                  <SensorChart data={readings} parameter="temperature" testMode={testMode} />
+                  <SensorChart data={readings} parameter="ph" testMode={testMode} />
+                  <SensorChart data={readings} parameter="dissolved_oxygen" testMode={testMode} />
+                  <SensorChart data={readings} parameter="ammonia" testMode={testMode} />
+                  <SensorChart data={readings} parameter="salinity" testMode={testMode} />
+                </div>
+              )}
+            </>
+          )}
+
+          {/* SETTINGS TAB - Threshold Configuration */}
+          {activeTab === 'settings' && (
+            <div className="settings-tab">
+              <ThresholdManager readings={readings} />
+            </div>
+          )}
+
+          {/* OPERATIONS TAB - Daily Operations */}
+          {activeTab === 'operations' && (
+            <div className="operations-tab">
+              <DailyChecklist />
+              <MaintenanceSchedule />
             </div>
           )}
         </main>
@@ -271,6 +353,9 @@ function App() {
       </div>
 
       <PWAPrompt />
+
+      {/* Documentation Modal */}
+      {showDocs && <Documentation onClose={() => setShowDocs(false)} />}
 
       <footer className="footer">
         <p>CPC357 IoT Project - Water Quality Monitoring System</p>

@@ -5,7 +5,7 @@ import './MetricCard.css'
 
 export default function MetricCard({ label, value, parameter, icon: Icon, testMode = false, previousValue }) {
     const threshold = getThreshold(parameter, testMode)
-    const inRange = isInRange(parameter, value, testMode)
+    const inRange = isInRange(value, parameter, testMode)
     const status = inRange ? 'safe' : 'danger'
 
     return (

@@ -15,6 +15,7 @@ import Documentation from './components/Documentation'
 import ThresholdManager from './components/ThresholdManager'
 import DailyChecklist from './components/DailyChecklist'
 import MaintenanceSchedule from './components/MaintenanceSchedule'
+import FloatingFish from './components/FloatingFish'
 import { getLatestReadings, getActiveAlerts, subscribeToSensorData, subscribeToAlerts } from './lib/supabase'
 import { formatRelativeTime, generateActiveAlerts } from './lib/utils'
 import './App.css'
@@ -348,6 +349,8 @@ function App() {
 
       {/* Documentation Modal */}
       {showDocs && <Documentation onClose={() => setShowDocs(false)} />}
+
+      <FloatingFish />
 
       <footer className="footer">
         <p>CPC357 IoT Project - Water Quality Monitoring System</p>

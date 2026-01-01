@@ -1,0 +1,152 @@
+/* Floating Fish Container */
+.floating-fish-container {
+    position: fixed;
+    bottom: 2rem;
+    left: 0;
+    z-index: 40;
+    /* Above cards, below modals */
+    pointer-events: none;
+    /* Let clicks pass through unless hovering actual fish */
+    width: 100vw;
+    height: 100px;
+    overflow: hidden;
+}
+
+.fish-wrapper {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    /* Start off-screen left */
+    animation: swimAcross 25s linear infinite;
+    pointer-events: auto;
+    /* Enable interaction */
+    cursor: help;
+    transition: transform 0.3s ease;
+}
+
+/* Pause animation on hover to read fact */
+.fish-wrapper:hover {
+    animation-play-state: paused;
+    transform: scale(1.1);
+}
+
+.fish-icon {
+    color: var(--primary-light);
+    filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.6));
+    transform: scaleX(-1);
+    /* Face right */
+}
+
+/* Bubbles for effect */
+.bubble {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    animation: floatUp 2s ease-in infinite;
+}
+
+/* Fact Bubble */
+.fact-bubble {
+    position: absolute;
+    bottom: 120%;
+    /* Position above fish */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    width: 250px;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.fish-wrapper:hover .fact-bubble {
+    opacity: 1;
+    visibility: visible;
+    bottom: 140%;
+}
+
+.fact-title {
+    color: var(--secondary);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+/* Keyframes */
+@keyframes swimAcross {
+    0% {
+        left: -100px;
+        transform: translateX(0) scaleX(-1);
+        /* Face right */
+    }
+
+    48% {
+        transform: translateX(0) scaleX(-1);
+    }
+
+    50% {
+        left: 100vw;
+        transform: translateX(0) scaleX(1);
+        /* Flip to face left? No, let's just loop for now */
+    }
+
+    50.01% {
+        left: -100px;
+        /* Reset instantly */
+    }
+
+    100% {
+        left: 100vw;
+        /* Keep loop smooth or just one way */
+    }
+}
+
+/* Simpler one-way loop */
+@keyframes swimAcross {
+    from {
+        left: -150px;
+    }
+
+    to {
+        left: 100%;
+    }
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-20px) scale(1.2);
+    }
+}
+
+/* Mobile: Adjust size/position or hide if too obtrusive */
+@media (max-width: 768px) {
+    .floating-fish-container {
+        bottom: 5rem;
+        /* clear bottom nav if any */
+    }
+
+    .fact-bubble {
+        width: 200px;
+        left: 0;
+        transform: translateX(-20%);
+        /* Shift bubble to stay on screen */
+    }
+}

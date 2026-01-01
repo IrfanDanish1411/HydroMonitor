@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './FloatingFish.css'
 
-// Using OpenMoji fish emoji as PNG (publicly accessible)
-const FISH_IMAGE_URL = "https://openmoji.org/data/color/svg/1F41F.svg"
+// Using Twemoji fish (Twitter emoji CDN - publicly accessible)
+const FISH_IMAGE_URL = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f41f.svg"
 
 const FISH_FACTS = [
     "Tilapia are mouthbrooders, meaning they carry their fertilized eggs in their mouths for protection!",
@@ -146,9 +146,9 @@ const FloatingFish = () => {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
-                <div className={`fact-bubble ${facingRight ? '' : 'flip-bubble'}`}>
+                <div className="fact-bubble">
                     <div className="fact-title">🐟 Did you know?</div>
-                    {currentFact}
+                    <p className="fact-text">{currentFact}</p>
                 </div>
 
                 <div className="fish-inner">

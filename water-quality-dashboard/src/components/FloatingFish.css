@@ -73,12 +73,12 @@
     animation-play-state: paused;
 }
 
-/* Fact Bubble */
+/* Fact Bubble - always stays readable */
 .fact-bubble {
     position: absolute;
     bottom: 80px;
     left: 50%;
-    transform: translateX(-50%) translateY(10px) scaleX(1);
+    transform: translateX(-50%) translateY(10px);
     background: rgba(15, 23, 42, 0.95);
     border: 1px solid var(--primary, #06b6d4);
     border-radius: 12px;
@@ -96,23 +96,24 @@
     text-align: center;
 }
 
-/* Flip the bubble text when fish faces left */
-.fact-bubble.flip-bubble {
-    transform: translateX(-50%) translateY(10px) scaleX(-1);
-}
-
-.fact-bubble.flip-bubble * {
-    transform: scaleX(-1);
-}
 
 .fish-wrapper.paused .fact-bubble {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(0) scaleX(1);
+    transform: translateX(-50%) translateY(0);
 }
 
-.fish-wrapper.paused .fact-bubble.flip-bubble {
-    transform: translateX(-50%) translateY(0) scaleX(-1);
+.fact-title {
+    color: #22d3ee;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.fact-text {
+    margin: 0;
 }
 
 .fact-title {

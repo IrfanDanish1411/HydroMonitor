@@ -219,9 +219,8 @@
 
 .breakdown-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0.25rem;
-    /* Tighter grid gap */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
 }
 
 .param-item {

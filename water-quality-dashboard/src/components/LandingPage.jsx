@@ -71,7 +71,7 @@ export default function LandingPage({ onEnterDashboard }) {
                             <Droplet size={28} />
                         </div>
                         <h3>Real-time Analysis</h3>
-                        <p>Instant precision tracking of Temperature, pH, DO, Ammonia, and Salinity ranges.</p>
+                        <p>Instant precision tracking of Temperature, pH, DO, and Ammonia ranges.</p>
                     </div>
 
                     <div className="feature-card">

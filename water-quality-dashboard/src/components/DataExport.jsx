@@ -9,7 +9,7 @@ export default function DataExport({ readings }) {
         }
 
         // CSV headers
-        const headers = ['Timestamp', 'Device ID', 'Temperature (°C)', 'pH', 'Dissolved Oxygen (mg/L)', 'Ammonia (ppm)', 'Salinity (ppt)']
+        const headers = ['Timestamp', 'Device ID', 'Temperature (°C)', 'pH', 'Dissolved Oxygen (mg/L)', 'Ammonia (ppm)']
 
         // CSV rows
         const rows = readings.map(r => [
@@ -18,8 +18,7 @@ export default function DataExport({ readings }) {
             r.temperature?.toFixed(2) || '',
             r.ph?.toFixed(2) || '',
             r.dissolved_oxygen?.toFixed(2) || '',
-            r.ammonia?.toFixed(2) || '',
-            r.salinity?.toFixed(2) || ''
+            r.ammonia?.toFixed(2) || ''
         ])
 
         // Combine headers and rows

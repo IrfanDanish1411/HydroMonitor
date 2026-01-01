@@ -9,16 +9,14 @@ export default function Chart({ data, parameters }) {
         temperature: reading.temperature,
         ph: reading.ph,
         dissolved_oxygen: reading.dissolved_oxygen,
-        ammonia: reading.ammonia,
-        salinity: reading.salinity
+        ammonia: reading.ammonia
     })).reverse() // Oldest to newest for chart
 
     const colors = {
         temperature: '#f59e0b',
         ph: '#3b82f6',
         dissolved_oxygen: '#10b981',
-        ammonia: '#ef4444',
-        salinity: '#8b5cf6'
+        ammonia: '#ef4444'
     }
 
     return (

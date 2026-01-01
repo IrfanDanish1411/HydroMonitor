@@ -25,11 +25,6 @@ function getRecommendation(parameter, severity) {
             high: 'Reduce aeration, check for algae bloom',
             low: 'Increase aeration immediately',
             medium: 'Increase water circulation'
-        },
-        salinity: {
-            high: 'Dilute with fresh water',
-            low: 'Add salt to increase salinity',
-            medium: 'Monitor evaporation rate'
         }
     }
 
@@ -41,8 +36,7 @@ function getParameterIcon(parameter) {
         temperature: '🌡️',
         ph: '⚗️',
         dissolved_oxygen: '💨',
-        ammonia: '🧪',
-        salinity: '🧂'
+        ammonia: '🧪'
     }
     return icons[parameter] || '📊'
 }

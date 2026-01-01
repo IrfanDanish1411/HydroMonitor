@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Droplet, Thermometer, Activity, Waves, FlaskConical, TestTube, Bell, BellOff, Moon, Sun, Settings, LayoutDashboard, ClipboardCheck, RefreshCw, BookOpen } from 'lucide-react'
+import { Thermometer, Activity, Waves, FlaskConical, TestTube, Bell, BellOff, Moon, Sun, Settings, LayoutDashboard, ClipboardCheck, RefreshCw, BookOpen } from 'lucide-react'
 import MetricCard from './components/MetricCard'
 import SensorChart from './components/SensorChart'
 import Chart from './components/Chart'
@@ -301,14 +301,7 @@ function App() {
                   icon={FlaskConical}
                   testMode={testMode}
                 />
-                <MetricCard
-                  label="Salinity"
-                  value={latestReading?.salinity}
-                  previousValue={readings[1]?.salinity}
-                  parameter="salinity"
-                  icon={Droplet}
-                  testMode={testMode}
-                />
+
               </div>
 
               {/* Individual Sensor Charts */}
@@ -318,7 +311,6 @@ function App() {
                   <SensorChart data={readings} parameter="ph" testMode={testMode} />
                   <SensorChart data={readings} parameter="dissolved_oxygen" testMode={testMode} />
                   <SensorChart data={readings} parameter="ammonia" testMode={testMode} />
-                  <SensorChart data={readings} parameter="salinity" testMode={testMode} />
                 </div>
               )}
             </>

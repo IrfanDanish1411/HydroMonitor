@@ -6,16 +6,14 @@ const PARAMETER_ICONS = {
     temperature: '🌡️',
     ph: '⚗️',
     dissolved_oxygen: '💨',
-    ammonia: '🧪',
-    salinity: '🧂'
+    ammonia: '🧪'
 }
 
 const PARAMETER_LABELS = {
     temperature: 'Temp',
     ph: 'pH',
     dissolved_oxygen: 'DO',
-    ammonia: 'NH₃',
-    salinity: 'Sal'
+    ammonia: 'NH₃'
 }
 
 export default function HealthScore({ readings, alerts }) {
@@ -30,15 +28,15 @@ export default function HealthScore({ readings, alerts }) {
         }
 
         const latestReading = readings[0]
-        const parameters = ['temperature', 'ph', 'dissolved_oxygen', 'ammonia', 'salinity']
+        const parameters = ['temperature', 'ph', 'dissolved_oxygen', 'ammonia']
 
         // Weight for each parameter (critical = high weight)
         const weights = {
             temperature: 25,    // Critical for fish metabolism
             dissolved_oxygen: 25, // Critical for survival
             ammonia: 20,        // Very important (toxic)
-            ph: 15,             // Important
-            salinity: 15        // Important
+            ammonia: 20,        // Very important (toxic)
+            ph: 15             // Important
         }
 
         let totalScore = 0

@@ -75,7 +75,7 @@ export default function Documentation({ onClose }) {
                                 <li><strong>Weather Widget:</strong> Local weather conditions</li>
                                 <li><strong>Sunrise/Sunset:</strong> Daily light cycle information</li>
                                 <li><strong>Location Map:</strong> Farm location with coordinates</li>
-                                <li><strong>Metric Cards:</strong> Current values for all 5 parameters</li>
+                                <li><strong>Metric Cards:</strong> Current values for all 4 parameters</li>
                                 <li><strong>Charts:</strong> Historical trends and patterns</li>
                             </ul>
 
@@ -109,10 +109,6 @@ export default function Documentation({ onClose }) {
                                 <div className="feature-item-doc">
                                     <strong>🧪 Ammonia</strong>
                                     <p>Toxic ammonia detection with instant alerts</p>
-                                </div>
-                                <div className="feature-item-doc">
-                                    <strong>🧂 Salinity</strong>
-                                    <p>Salt concentration monitoring for species requirements</p>
                                 </div>
                             </div>
 
@@ -191,11 +187,6 @@ export default function Documentation({ onClose }) {
                                         <td>0 - 1 ppm</td>
                                         <td>0.001 ppm</td>
                                     </tr>
-                                    <tr>
-                                        <td>Salinity</td>
-                                        <td>0 - 50 ppt</td>
-                                        <td>0.5 ppt</td>
-                                    </tr>
                                 </tbody>
                             </table>
 
@@ -252,7 +243,6 @@ export default function Documentation({ onClose }) {
                                     <li><strong>Ammonia High:</strong> 30-50% water change, reduce feeding</li>
                                     <li><strong>DO Low:</strong> Increase aeration immediately</li>
                                     <li><strong>pH Imbalance:</strong> Use pH adjusters or check water source</li>
-                                    <li><strong>Salinity Off:</strong> Add salt or dilute with fresh water</li>
                                 </ul>
                             </div>
                         </div>

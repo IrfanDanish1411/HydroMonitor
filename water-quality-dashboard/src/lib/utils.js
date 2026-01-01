@@ -3,16 +3,14 @@ export const THRESHOLDS = {
     temperature: { min: 26, max: 32 },
     ph: { min: 7.0, max: 8.5 },
     dissolved_oxygen: { min: 4, max: 8 },
-    ammonia: { min: 0, max: 0.5 },
-    salinity: { min: 28, max: 32 }
+    ammonia: { min: 0, max: 0.5 }
 }
 
 export const TEST_THRESHOLDS = {
     temperature: { min: 0, max: 100 },
     ph: { min: 0, max: 14 },
     dissolved_oxygen: { min: 0, max: 20 },
-    ammonia: { min: 0, max: 50 },
-    salinity: { min: 0, max: 50 }
+    ammonia: { min: 0, max: 50 }
 }
 
 // Check if value is within range
@@ -152,12 +150,6 @@ export const PARAMETER_CONFIG = {
         unit: 'ppm',
         icon: '🧪',
         decimals: 3
-    },
-    salinity: {
-        label: 'Salinity',
-        unit: 'ppt',
-        icon: '🧂',
-        decimals: 1
     }
 }
 
@@ -175,7 +167,7 @@ export function generateActiveAlerts(reading, testMode = false) {
     if (!reading) return []
 
     const alerts = []
-    const parameters = ['temperature', 'ph', 'dissolved_oxygen', 'ammonia', 'salinity']
+    const parameters = ['temperature', 'ph', 'dissolved_oxygen', 'ammonia']
     const timestamp = new Date().toISOString()
 
     parameters.forEach(param => {

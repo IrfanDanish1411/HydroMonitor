@@ -10,40 +10,35 @@ const SPECIES_PRESETS = {
         temperature: { min: 26, max: 32 },
         ph: { min: 7.0, max: 8.5 },
         dissolved_oxygen: { min: 4.0, max: 8.0 },
-        ammonia: { min: 0, max: 0.02 },
-        salinity: { min: 28, max: 32 }
+        ammonia: { min: 0, max: 0.02 }
     },
     grouper: {
         name: 'Kerapu (Hybrid Grouper)',
         temperature: { min: 26, max: 30 },
         ph: { min: 7.5, max: 8.3 },
         dissolved_oxygen: { min: 5.0, max: 8.0 },
-        ammonia: { min: 0, max: 0.02 },
-        salinity: { min: 15, max: 32 }
+        ammonia: { min: 0, max: 0.02 }
     },
     tilapia: {
         name: 'Tilapia (Red/Black)',
         temperature: { min: 25, max: 32 },
         ph: { min: 6.5, max: 9.0 },
         dissolved_oxygen: { min: 3.0, max: 8.0 },
-        ammonia: { min: 0, max: 0.05 },
-        salinity: { min: 0, max: 10 }
+        ammonia: { min: 0, max: 0.05 }
     },
     shrimp: {
         name: 'Udang Vannamei (White Shrimp)',
         temperature: { min: 28, max: 32 },
         ph: { min: 7.5, max: 8.5 },
         dissolved_oxygen: { min: 5.0, max: 8.0 },
-        ammonia: { min: 0, max: 0.01 },
-        salinity: { min: 15, max: 25 }
+        ammonia: { min: 0, max: 0.01 }
     },
     custom: {
         name: 'Custom',
         temperature: { min: 20, max: 30 },
         ph: { min: 6.5, max: 8.5 },
         dissolved_oxygen: { min: 4.0, max: 8.0 },
-        ammonia: { min: 0, max: 0.05 },
-        salinity: { min: 0, max: 35 }
+        ammonia: { min: 0, max: 0.05 }
     }
 }
 
@@ -51,8 +46,7 @@ const PARAMETER_CONFIGS = {
     temperature: { label: 'Temperature', unit: '°C', absoluteMin: 0, absoluteMax: 50, step: 0.5 },
     ph: { label: 'pH Level', unit: '', absoluteMin: 0, absoluteMax: 14, step: 0.1 },
     dissolved_oxygen: { label: 'Dissolved Oxygen', unit: 'mg/L', absoluteMin: 0, absoluteMax: 20, step: 0.1 },
-    ammonia: { label: 'Ammonia', unit: 'ppm', absoluteMin: 0, absoluteMax: 1, step: 0.001 },
-    salinity: { label: 'Salinity', unit: 'ppt', absoluteMin: 0, absoluteMax: 50, step: 0.5 }
+    ammonia: { label: 'Ammonia', unit: 'ppm', absoluteMin: 0, absoluteMax: 1, step: 0.001 }
 }
 
 export default function ThresholdManager({ readings = [] }) {
@@ -391,7 +385,7 @@ export default function ThresholdManager({ readings = [] }) {
                             case 'ph': return '⚗️'
                             case 'dissolved_oxygen': return '💨'
                             case 'ammonia': return '🧪'
-                            case 'salinity': return '🧂'
+
                             default: return '📊'
                         }
                     }

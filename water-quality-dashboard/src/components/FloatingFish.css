@@ -1,152 +1,200 @@
 /* Floating Fish Container */
 .floating-fish-container {
     position: fixed;
-    bottom: 2rem;
+    bottom: 0;
     left: 0;
     z-index: 40;
-    /* Above cards, below modals */
     pointer-events: none;
-    /* Let clicks pass through unless hovering actual fish */
     width: 100vw;
-    height: 100px;
-    overflow: hidden;
+    height: 150px;
+    /* Increased height area */
+    /* overflow: hidden; -> REMOVED to fix bubble clipping */
 }
 
+/* Wrapper moves across screen (Left -> Right) */
 .fish-wrapper {
     position: absolute;
+    bottom: 20px;
     display: inline-flex;
     align-items: center;
-    /* Start off-screen left */
-    animation: swimAcross 25s linear infinite;
+    /* More natural timing function */
+    animation: swimAcross 35s linear infinite;
     pointer-events: auto;
-    /* Enable interaction */
     cursor: help;
-    transition: transform 0.3s ease;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+    will-change: left, transform;
 }
 
-/* Pause animation on hover to read fact */
-.fish-wrapper:hover {
+/* Inner wrapper for bobbing (Up/Down) */
+.fish-inner {
+    animation: bobbing 3s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* The actual image adds the "wobble" / swimming motion */
+.fish-image {
+    width: 80px;
+    /* Adjust size for the PNG */
+    height: auto;
+    transform-origin: center;
+    animation: swimWiggle 0.8s ease-in-out infinite alternate;
+}
+
+/* Pause EVERYTHING on hover */
+.fish-wrapper:hover,
+.fish-wrapper:hover .fish-inner,
+.fish-wrapper:hover .fish-image {
     animation-play-state: paused;
+}
+
+/* On hover, scale up slightly */
+.fish-inner:hover {
     transform: scale(1.1);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.fish-icon {
-    color: var(--primary-light);
-    filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.6));
-    transform: scaleX(-1);
-    /* Face right */
-}
-
-/* Bubbles for effect */
+/* Bubbles */
 .bubble {
     position: absolute;
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     animation: floatUp 2s ease-in infinite;
+    bottom: 10px;
+    z-index: -1;
 }
 
 /* Fact Bubble */
 .fact-bubble {
     position: absolute;
-    bottom: 120%;
-    /* Position above fish */
+    bottom: 110px;
+    /* Fixed distance from bottom of wrapper */
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(10px);
     background: rgba(15, 23, 42, 0.95);
     border: 1px solid var(--primary);
     border-radius: var(--radius-md);
     padding: 1rem;
-    width: 250px;
+    width: 260px;
     color: var(--text-primary);
-    font-size: 0.875rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     opacity: 0;
     visibility: hidden;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
+    z-index: 100;
+    text-align: center;
 }
 
 .fish-wrapper:hover .fact-bubble {
     opacity: 1;
     visibility: visible;
-    bottom: 140%;
+    transform: translateX(-50%) translateY(0);
 }
 
 .fact-title {
-    color: var(--secondary);
-    font-weight: 700;
-    margin-bottom: 0.25rem;
+    color: var(--primary-light);
+    font-weight: 800;
+    margin-bottom: 0.5rem;
     font-size: 0.75rem;
     text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* Keyframes */
+/* 
+  ANIMATIONS 
+*/
+
+/* 1. Path across the screen */
 @keyframes swimAcross {
     0% {
-        left: -100px;
-        transform: translateX(0) scaleX(-1);
-        /* Face right */
+        left: -150px;
+        transform: scaleX(1);
+        /* PNG might face left or right natively, assuming right facing */
     }
 
-    48% {
-        transform: translateX(0) scaleX(-1);
+    /* Add stops to make it feel organic */
+
+    45% {
+        transform: scaleX(1);
     }
 
-    50% {
-        left: 100vw;
-        transform: translateX(0) scaleX(1);
-        /* Flip to face left? No, let's just loop for now */
-    }
-
-    50.01% {
-        left: -100px;
-        /* Reset instantly */
-    }
+    /* Turn around logic if we wanted it to swim back, but linear loop is safer for now.
+     Let's keep it one-way for simplicity but vary speed. */
 
     100% {
         left: 100vw;
-        /* Keep loop smooth or just one way */
+        transform: scaleX(1);
     }
 }
 
-/* Simpler one-way loop */
-@keyframes swimAcross {
+/* 2. Up and Down movement */
+@keyframes bobbing {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-25px);
+    }
+}
+
+/* 3. Wiggle/Swim stroke */
+@keyframes swimWiggle {
     from {
-        left: -150px;
+        transform: rotate(3deg) scaleY(1);
     }
 
     to {
-        left: 100%;
+        transform: rotate(-3deg) scaleY(0.98);
+        /* Squash and stretch slightly */
     }
 }
 
 @keyframes floatUp {
     0% {
         opacity: 0;
-        transform: translateY(0) scale(0.5);
+        bottom: 0;
+        transform: scale(0.5);
     }
 
     50% {
-        opacity: 1;
+        opacity: 0.6;
     }
 
     100% {
         opacity: 0;
-        transform: translateY(-20px) scale(1.2);
+        bottom: 60px;
+        transform: scale(1.2);
     }
 }
 
-/* Mobile: Adjust size/position or hide if too obtrusive */
+/* Mobile Adjustments */
 @media (max-width: 768px) {
     .floating-fish-container {
-        bottom: 5rem;
-        /* clear bottom nav if any */
+        height: 120px;
+        bottom: 0;
+        /* Adjust this if bottom nav exists */
+    }
+
+    .fish-image {
+        width: 60px;
     }
 
     .fact-bubble {
-        width: 200px;
+        width: 220px;
+        bottom: 90px;
+        /* Ensure it doesn't go off screen left/right */
         left: 0;
-        transform: translateX(-20%);
-        /* Shift bubble to stay on screen */
+        transform: translateX(0) translateY(10px);
+    }
+
+    .fish-wrapper:hover .fact-bubble {
+        transform: translateX(0) translateY(0);
     }
 }

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Fish } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
 import './FloatingFish.css'
+
+const FISH_IMAGE_URL = "https://images.template.net/466665/Fish-Icon-Clipart-edit-online.png"
 
 const FISH_FACTS = [
     "Tilapia are mouthbrooders, meaning they carry their fertilized eggs in their mouths for protection!",
@@ -39,7 +41,9 @@ const FloatingFish = () => {
                     {currentFact}
                 </div>
 
-                <Fish size={48} className="fish-icon" />
+                <div className="fish-inner">
+                    <img src={FISH_IMAGE_URL} alt="Swimming Fish" className="fish-image" />
+                </div>
 
                 {/* Decorative bubbles */}
                 <div className="bubble" style={{ left: '10px', width: '8px', height: '8px', animationDelay: '0s' }}></div>

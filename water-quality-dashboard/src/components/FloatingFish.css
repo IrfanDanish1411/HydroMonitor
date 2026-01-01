@@ -109,24 +109,33 @@
 */
 
 /* 1. Path across the screen */
+/* 1. Path across the screen with randomness */
 @keyframes swimAcross {
     0% {
         left: -150px;
-        transform: scaleX(1);
-        /* PNG might face left or right natively, assuming right facing */
-    }
-
-    /* Add stops to make it feel organic */
-
-    45% {
+        bottom: 10%;
         transform: scaleX(1);
     }
 
-    /* Turn around logic if we wanted it to swim back, but linear loop is safer for now.
-     Let's keep it one-way for simplicity but vary speed. */
+    20% {
+        bottom: 60%;
+    }
+
+    40% {
+        bottom: 20%;
+    }
+
+    60% {
+        bottom: 80%;
+    }
+
+    80% {
+        bottom: 30%;
+    }
 
     100% {
         left: 100vw;
+        bottom: 50%;
         transform: scaleX(1);
     }
 }

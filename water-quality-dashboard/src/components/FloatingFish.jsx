@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useState, useEffect, useRef } from 'react'
 import './FloatingFish.css'
 
 const FISH_IMAGE_URL = "https://images.template.net/466665/Fish-Icon-Clipart-edit-online.png"
@@ -18,12 +17,8 @@ const FISH_FACTS = [
 ]
 
 const FloatingFish = () => {
-    const [currentFact, setCurrentFact] = useState("")
-
-    // Pick a random fact initially
-    useEffect(() => {
-        pickRandomFact()
-    }, [])
+    // Initialize with a random fact to prevent empty bubble
+    const [currentFact, setCurrentFact] = useState(FISH_FACTS[0])
 
     const pickRandomFact = () => {
         const randomIndex = Math.floor(Math.random() * FISH_FACTS.length)

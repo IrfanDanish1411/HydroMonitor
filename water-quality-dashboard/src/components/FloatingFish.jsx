@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './FloatingFish.css'
 
-// Using the direct CDN link for the flaticon fish icon
-const FISH_IMAGE_URL = "https://cdn-icons-png.flaticon.com/512/3075/3075494.png"
+// Using OpenMoji fish emoji as PNG (publicly accessible)
+const FISH_IMAGE_URL = "https://openmoji.org/data/color/svg/1F41F.svg"
 
 const FISH_FACTS = [
     "Tilapia are mouthbrooders, meaning they carry their fertilized eggs in their mouths for protection!",

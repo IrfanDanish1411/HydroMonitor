@@ -146,7 +146,10 @@ const FloatingFish = () => {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
-                <div className="fact-bubble">
+                <div
+                    className="fact-bubble"
+                    style={{ transform: `translateX(-50%) translateY(${isHovered ? '0' : '10px'}) scaleX(${facingRight ? 1 : -1})` }}
+                >
                     <div className="fact-title">🐟 Did you know?</div>
                     <p className="fact-text">{currentFact}</p>
                 </div>

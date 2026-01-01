@@ -20,67 +20,76 @@ const FISH_FACTS = [
 const FloatingFish = () => {
     const [currentFact, setCurrentFact] = useState(FISH_FACTS[0])
     const [position, setPosition] = useState({ x: 100, y: 200 })
-    const [direction, setDirection] = useState({ x: 1, y: 0.5 }) // Direction vector
+    const [direction, setDirection] = useState({ x: 1, y: 0.5 })
     const [isMoving, setIsMoving] = useState(true)
     const [facingRight, setFacingRight] = useState(true)
     const [isHovered, setIsHovered] = useState(false)
     const animationRef = useRef(null)
     const lastTimeRef = useRef(0)
+    const directionRef = useRef(direction)
+
+    // Keep directionRef in sync
+    useEffect(() => {
+        directionRef.current = direction
+    }, [direction])
 
     const pickRandomFact = () => {
         const randomIndex = Math.floor(Math.random() * FISH_FACTS.length)
         setCurrentFact(FISH_FACTS[randomIndex])
     }
 
-    // Random direction change
+    // Random direction change - fish always faces the direction it's moving
     const changeDirection = useCallback(() => {
-        const angle = Math.random() * Math.PI * 2 // Random angle in radians
-        const speed = 0.5 + Math.random() * 1.5 // Random speed between 0.5 and 2
+        const angle = Math.random() * Math.PI * 2
+        const speed = 0.5 + Math.random() * 1.5
         const newDirX = Math.cos(angle) * speed
         const newDirY = Math.sin(angle) * speed
         setDirection({ x: newDirX, y: newDirY })
+        // Fish faces RIGHT when moving RIGHT (positive X), LEFT when moving LEFT (negative X)
         setFacingRight(newDirX > 0)
     }, [])
 
     // Random pause
     const randomPause = useCallback(() => {
-        if (Math.random() < 0.15) { // 15% chance to pause each second
+        if (Math.random() < 0.15) {
             setIsMoving(false)
-            const pauseDuration = 500 + Math.random() * 2000 // 0.5 to 2.5 seconds
+            const pauseDuration = 500 + Math.random() * 2000
             setTimeout(() => {
                 setIsMoving(true)
-                changeDirection() // Change direction after pause
+                changeDirection()
             }, pauseDuration)
         }
     }, [changeDirection])
 
     // Animation loop
     useEffect(() => {
-        if (isHovered) return // Stop movement when hovered
+        if (isHovered) return
 
         const animate = (currentTime) => {
             if (lastTimeRef.current === 0) {
                 lastTimeRef.current = currentTime
             }
-            const deltaTime = (currentTime - lastTimeRef.current) / 16 // Normalize to ~60fps
+            const deltaTime = (currentTime - lastTimeRef.current) / 16
             lastTimeRef.current = currentTime
 
             if (isMoving) {
-                setPosition(prev => {
-                    let newX = prev.x + direction.x * deltaTime
-                    let newY = prev.y + direction.y * deltaTime
+                const dir = directionRef.current
 
-                    // Boundary checks - bounce off walls
+                setPosition(prev => {
+                    let newX = prev.x + dir.x * deltaTime
+                    let newY = prev.y + dir.y * deltaTime
+
                     const maxX = window.innerWidth - 100
                     const maxY = window.innerHeight - 150
                     const minX = 0
                     const minY = 80
 
+                    // Bounce off walls and flip direction
                     if (newX < minX || newX > maxX) {
-                        setDirection(d => {
-                            setFacingRight(d.x < 0) // Flip direction
-                            return { ...d, x: -d.x }
-                        })
+                        const newDirX = -dir.x
+                        setDirection(d => ({ ...d, x: newDirX }))
+                        // Fish faces the new direction after bouncing
+                        setFacingRight(newDirX > 0)
                         newX = Math.max(minX, Math.min(maxX, newX))
                     }
                     if (newY < minY || newY > maxY) {
@@ -102,7 +111,7 @@ const FloatingFish = () => {
                 cancelAnimationFrame(animationRef.current)
             }
         }
-    }, [direction, isMoving, isHovered])
+    }, [isMoving, isHovered])
 
     // Random behavior changes
     useEffect(() => {
@@ -110,7 +119,6 @@ const FloatingFish = () => {
 
         const behaviorInterval = setInterval(() => {
             randomPause()
-            // Random direction change every few seconds
             if (Math.random() < 0.3) {
                 changeDirection()
             }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Thermometer, Activity, Waves, FlaskConical, TestTube, Bell, BellOff, Moon, Sun, Settings, LayoutDashboard, ClipboardCheck, RefreshCw, BookOpen } from 'lucide-react'
+import { Droplet, Thermometer, Activity, Waves, FlaskConical, TestTube, Bell, BellOff, Moon, Sun, Settings, LayoutDashboard, ClipboardCheck, RefreshCw, BookOpen } from 'lucide-react'
 import MetricCard from './components/MetricCard'
 import SensorChart from './components/SensorChart'
 import Chart from './components/Chart'

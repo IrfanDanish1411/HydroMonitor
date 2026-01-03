@@ -5,6 +5,7 @@ import './FloatingFish.css'
 const FISH_IMAGE_URL = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f41f.svg"
 
 const FISH_FACTS = [
+    // Fish Facts
     "Tilapia are mouthbrooders, meaning they carry their fertilized eggs in their mouths for protection!",
     "Catfish have over 27,000 taste buds, while humans only have about 9,000.",
     "Carp can recognize their owners and can be trained to eat from a hand.",
@@ -14,7 +15,34 @@ const FISH_FACTS = [
     "Goldfish can distinguish between different faces and shapes.",
     "Walking catfish can travel across land using their pectoral fins!",
     "Fish were the first vertebrates with bony skeletons to appear on Earth.",
-    "Most lipstick contains fish scales (guanine) to give it a shimmer!"
+    "Most lipstick contains fish scales (guanine) to give it a shimmer!",
+    "Asian Seabass (Siakap) can grow up to 1.8 meters and live for over 50 years!",
+    "Groupers start life as females and can change to males as they grow older.",
+    "Tilapia can survive in water with very low oxygen levels.",
+    "Some fish can recognize themselves in mirrors - a sign of self-awareness!",
+    "The electric eel can produce shocks up to 860 volts.",
+    "Salmon can travel thousands of kilometers to return to the exact spot where they were born.",
+    "Seahorses are the only fish where males give birth to babies!",
+    "The deepest fish ever found lives 8,336 meters below the surface.",
+    "Fish can get sunburned if kept in shallow water without shade.",
+    "A group of fish is called a 'school' - but they never have homework!",
+
+    // Corny Fish Jokes 🎣
+    "🎣 Why don't fish play tennis? They're afraid of the net!",
+    "🎣 What do you call a fish without eyes? A fsh!",
+    "🎣 Why are fish so smart? Because they live in schools!",
+    "🎣 What do sea monsters eat? Fish and ships!",
+    "🎣 Where do fish keep their money? In a river bank!",
+    "🎣 What did the fish say when it hit the wall? Dam!",
+    "🎣 Why did the fish blush? It saw the ocean's bottom!",
+    "🎣 What do you call a fish with no tail? A one-ended fish!",
+    "🎣 How do fish go into business? They start on a small scale!",
+    "🎣 What's a fish's favorite instrument? The bass guitar!",
+    "🎣 Why are fish so easy to weigh? They have their own scales!",
+    "🎣 What do you call a lazy crayfish? A slobster!",
+    "🎣 Why did the fish get bad grades? It was below C-level!",
+    "🎣 What do you call a fish that needs a doctor? An ill-fish!",
+    "🎣 I'm hooked on these fish jokes... they're reel-y good!"
 ]
 
 const FloatingFish = () => {

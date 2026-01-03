@@ -35,7 +35,6 @@ export default function HealthScore({ readings, alerts }) {
             temperature: 25,    // Critical for fish metabolism
             dissolved_oxygen: 25, // Critical for survival
             ammonia: 20,        // Very important (toxic)
-            ammonia: 20,        // Very important (toxic)
             ph: 15             // Important
         }
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Save, Upload, RotateCcw, Fish, Plus, Trash2, Edit2, Lock, Unlock } from 'lucide-react'
 import { THRESHOLDS } from '../lib/utils'
+import { supabase } from '../lib/supabase'
 import './ThresholdManager.css'
 
 // Preset profiles for different species
@@ -211,11 +212,31 @@ export default function ThresholdManager({ readings = [] }) {
         }))
     }
 
-    // Save to localStorage
-    const handleSave = () => {
+    // Save to localStorage AND Supabase (for backend sync)
+    const handleSave = async () => {
+        // Save to localStorage
         localStorage.setItem('customThresholds', JSON.stringify(thresholds))
         localStorage.setItem('selectedPreset', selectedPreset)
-        alert('✓ Thresholds saved successfully!')
+
+        // Also sync to Supabase for backend to read
+        try {
+            await supabase.from('threshold_settings').upsert({
+                id: 1,
+                temperature_min: thresholds.temperature.min,
+                temperature_max: thresholds.temperature.max,
+                ph_min: thresholds.ph.min,
+                ph_max: thresholds.ph.max,
+                dissolved_oxygen_min: thresholds.dissolved_oxygen.min,
+                dissolved_oxygen_max: thresholds.dissolved_oxygen.max,
+                ammonia_min: thresholds.ammonia.min,
+                ammonia_max: thresholds.ammonia.max,
+                updated_at: new Date().toISOString()
+            })
+            alert('Thresholds saved and synced to server!')
+        } catch (error) {
+            console.log('Supabase sync failed:', error)
+            alert('Thresholds saved locally (server sync unavailable)')
+        }
     }
 
     // Export configuration
@@ -513,8 +534,7 @@ export default function ThresholdManager({ readings = [] }) {
             </div>
 
             <div className="threshold-info">
-                <p>💡 <strong>Tip:</strong> Thresholds are saved locally and will persist across sessions.</p>
-                <p>⚠️ <strong>Note:</strong> Changes only affect this dashboard. Backend alert thresholds are separate.</p>
+                <p><strong>Tip:</strong> Click "Save Configuration" to sync thresholds to the server for email alerts.</p>
             </div>
         </div>
     )

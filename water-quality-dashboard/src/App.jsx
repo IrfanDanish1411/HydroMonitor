@@ -183,7 +183,7 @@ function App() {
               onClick={() => setActiveTab('settings')}
             >
               <Settings size={18} />
-              Thresholds
+              Settings
             </button>
             <button
               className={`nav-pill ${activeTab === 'operations' ? 'active' : ''}`}

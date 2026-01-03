@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Mail, MailOff, Save, AlertTriangle, Clock, Check } from 'lucide-react'
+import { Mail, MailX, Save, AlertTriangle, Clock, Check } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import './EmailSettings.css'
 
@@ -96,7 +96,7 @@ export default function EmailSettings() {
         <div className="email-settings">
             <div className="email-settings-header">
                 <div className="header-icon">
-                    {emailEnabled ? <Mail size={24} /> : <MailOff size={24} />}
+                    {emailEnabled ? <Mail size={24} /> : <MailX size={24} />}
                 </div>
                 <div className="header-text">
                     <h3>Email Notifications</h3>

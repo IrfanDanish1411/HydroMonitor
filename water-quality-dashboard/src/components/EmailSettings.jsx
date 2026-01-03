@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Mail, MailX, Save, AlertTriangle, Clock, Check } from 'lucide-react'
+import { Mail, MailX, Save, AlertTriangle, Clock, Check, Lock, Unlock } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import './EmailSettings.css'
+
+// Admin PIN for protecting email settings (change this!)
+const ADMIN_PIN = '472513'
 
 export default function EmailSettings() {
     const [emailEnabled, setEmailEnabled] = useState(false)
@@ -10,6 +13,11 @@ export default function EmailSettings() {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [saveMessage, setSaveMessage] = useState(null)
+
+    // PIN lock state
+    const [isLocked, setIsLocked] = useState(true)
+    const [pinInput, setPinInput] = useState('')
+    const [pinError, setPinError] = useState(false)
 
     // Load settings on mount
     useEffect(() => {
@@ -52,7 +60,24 @@ export default function EmailSettings() {
         }
     }
 
+    function handleUnlock() {
+        if (pinInput === ADMIN_PIN) {
+            setIsLocked(false)
+            setPinError(false)
+            setPinInput('')
+        } else {
+            setPinError(true)
+            setTimeout(() => setPinError(false), 2000)
+        }
+    }
+
     async function saveSettings() {
+        if (isLocked) {
+            setSaveMessage({ type: 'error', text: 'Unlock with PIN first!' })
+            setTimeout(() => setSaveMessage(null), 2000)
+            return
+        }
+
         setSaving(true)
         setSaveMessage(null)
 
@@ -85,10 +110,12 @@ export default function EmailSettings() {
         }
 
         setSaving(false)
+        setIsLocked(true) // Re-lock after saving
         setTimeout(() => setSaveMessage(null), 3000)
     }
 
     const handleToggle = () => {
+        if (isLocked) return // Prevent changes when locked
         setEmailEnabled(!emailEnabled)
     }
 
@@ -113,6 +140,34 @@ export default function EmailSettings() {
             </div>
 
             <div className="email-settings-content">
+                {/* Admin Lock Section */}
+                <div className={`setting-row lock-row ${isLocked ? 'locked' : 'unlocked'}`}>
+                    <div className="setting-label">
+                        {isLocked ? <Lock size={18} /> : <Unlock size={18} />}
+                        <span className="label-text">
+                            {isLocked ? 'Settings Locked' : 'Settings Unlocked'}
+                        </span>
+                    </div>
+                    {isLocked ? (
+                        <div className="pin-input-group">
+                            <input
+                                type="password"
+                                className={`pin-input ${pinError ? 'error' : ''}`}
+                                placeholder="Enter PIN"
+                                value={pinInput}
+                                onChange={(e) => setPinInput(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleUnlock()}
+                                maxLength={6}
+                            />
+                            <button className="unlock-btn" onClick={handleUnlock}>
+                                Unlock
+                            </button>
+                        </div>
+                    ) : (
+                        <span className="unlock-status">Ready to edit</span>
+                    )}
+                </div>
+
                 {/* Main Toggle */}
                 <div className="setting-row toggle-row">
                     <div className="setting-label">
@@ -129,7 +184,7 @@ export default function EmailSettings() {
                 </div>
 
                 {/* Email Address Input */}
-                <div className={`setting-row ${!emailEnabled ? 'disabled' : ''}`}>
+                <div className={`setting-row ${(!emailEnabled || isLocked) ? 'disabled' : ''}`}>
                     <div className="setting-label">
                         <span className="label-text">Recipient Email</span>
                         <span className="label-hint">Where to send alert notifications</span>
@@ -140,12 +195,12 @@ export default function EmailSettings() {
                         placeholder="your-email@example.com"
                         value={emailAddress}
                         onChange={(e) => setEmailAddress(e.target.value)}
-                        disabled={!emailEnabled}
+                        disabled={!emailEnabled || isLocked}
                     />
                 </div>
 
                 {/* Cooldown Setting */}
-                <div className={`setting-row ${!emailEnabled ? 'disabled' : ''}`}>
+                <div className={`setting-row ${(!emailEnabled || isLocked) ? 'disabled' : ''}`}>
                     <div className="setting-label">
                         <Clock size={16} className="setting-icon" />
                         <span className="label-text">Alert Cooldown</span>
@@ -155,7 +210,7 @@ export default function EmailSettings() {
                         className="cooldown-select"
                         value={cooldownMinutes}
                         onChange={(e) => setCooldownMinutes(Number(e.target.value))}
-                        disabled={!emailEnabled}
+                        disabled={!emailEnabled || isLocked}
                     >
                         <option value={1}>1 minute</option>
                         <option value={5}>5 minutes</option>

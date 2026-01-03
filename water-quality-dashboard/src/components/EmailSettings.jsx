@@ -17,29 +17,36 @@ export default function EmailSettings() {
     }, [])
 
     async function loadSettings() {
+        // Always try localStorage first (reliable fallback)
+        const saved = localStorage.getItem('emailSettings')
+        if (saved) {
+            try {
+                const settings = JSON.parse(saved)
+                setEmailEnabled(settings.enabled ?? false)
+                setEmailAddress(settings.email ?? '')
+                setCooldownMinutes(settings.cooldownMinutes ?? 5)
+                console.log('Loaded email settings from localStorage:', settings)
+            } catch (e) {
+                console.error('Error parsing localStorage settings:', e)
+            }
+        }
+
+        // Then try Supabase (optional sync)
         try {
-            // Try to get settings from Supabase
             const { data, error } = await supabase
                 .from('email_settings')
                 .select('*')
                 .limit(1)
                 .single()
 
-            if (data) {
+            if (data && !error) {
                 setEmailEnabled(data.enabled ?? false)
                 setEmailAddress(data.recipient_email ?? '')
                 setCooldownMinutes(Math.round((data.cooldown_seconds ?? 300) / 60))
+                console.log('Loaded email settings from Supabase:', data)
             }
         } catch (error) {
-            // Table might not exist yet - use localStorage fallback
-            console.log('Using localStorage for email settings')
-            const saved = localStorage.getItem('emailSettings')
-            if (saved) {
-                const settings = JSON.parse(saved)
-                setEmailEnabled(settings.enabled ?? false)
-                setEmailAddress(settings.email ?? '')
-                setCooldownMinutes(settings.cooldownMinutes ?? 5)
-            }
+            console.log('Supabase email_settings table not available, using localStorage only')
         } finally {
             setLoading(false)
         }
@@ -49,31 +56,32 @@ export default function EmailSettings() {
         setSaving(true)
         setSaveMessage(null)
 
-        const settings = {
+        // Always save to localStorage first (guaranteed to work)
+        const localSettings = {
             enabled: emailEnabled,
-            recipient_email: emailAddress,
-            cooldown_seconds: cooldownMinutes * 60,
-            updated_at: new Date().toISOString()
+            email: emailAddress,
+            cooldownMinutes
         }
+        localStorage.setItem('emailSettings', JSON.stringify(localSettings))
+        console.log('Saved to localStorage:', localSettings)
 
+        // Also try Supabase (optional sync)
         try {
-            // Try Supabase first
             const { error } = await supabase
                 .from('email_settings')
-                .upsert({ id: 1, ...settings })
+                .upsert({
+                    id: 1,
+                    enabled: emailEnabled,
+                    recipient_email: emailAddress,
+                    cooldown_seconds: cooldownMinutes * 60,
+                    updated_at: new Date().toISOString()
+                })
 
             if (error) throw error
-
-            setSaveMessage({ type: 'success', text: 'Settings saved to database!' })
+            setSaveMessage({ type: 'success', text: 'Settings saved!' })
         } catch (error) {
-            // Fallback to localStorage
-            console.log('Supabase save failed, using localStorage:', error.message)
-            localStorage.setItem('emailSettings', JSON.stringify({
-                enabled: emailEnabled,
-                email: emailAddress,
-                cooldownMinutes
-            }))
-            setSaveMessage({ type: 'warning', text: 'Saved locally (database table not configured)' })
+            console.log('Supabase save failed (table may not exist):', error.message)
+            setSaveMessage({ type: 'success', text: 'Settings saved locally!' })
         }
 
         setSaving(false)

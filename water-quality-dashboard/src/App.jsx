@@ -14,6 +14,7 @@ import LandingPage from './components/LandingPage'
 import Documentation from './components/Documentation'
 import ThresholdManager from './components/ThresholdManager'
 import EmailSettings from './components/EmailSettings'
+import SettingsPage from './components/SettingsPage'
 import DailyChecklist from './components/DailyChecklist'
 import MaintenanceSchedule from './components/MaintenanceSchedule'
 import FloatingFish from './components/FloatingFish'
@@ -318,12 +319,15 @@ function App() {
             </>
           )}
 
-          {/* SETTINGS TAB - Threshold Configuration */}
+          {/* SETTINGS TAB - All Settings */}
           {activeTab === 'settings' && (
-            <div className="settings-tab">
-              <EmailSettings />
-              <ThresholdManager readings={readings} />
-            </div>
+            <SettingsPage
+              readings={readings}
+              darkMode={darkMode}
+              setDarkMode={setDarkMode}
+              autoRefresh={autoRefresh}
+              setAutoRefresh={setAutoRefresh}
+            />
           )}
 
           {/* OPERATIONS TAB - Daily Operations */}

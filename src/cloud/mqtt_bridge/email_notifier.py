@@ -77,7 +77,7 @@ class EmailNotifier:
         self.enabled = True
         
         # Try to load settings from Supabase
-        self._load_db_settings()
+        self._load_db_settings(verbose=True)
         
         if self.enabled:
             recipient = self._get_recipient()
@@ -86,36 +86,48 @@ class EmailNotifier:
             else:
                 print("⚠️  No recipient email configured. Set ALERT_EMAIL_TO or configure in dashboard.")
     
-    def _load_db_settings(self):
-        """Load email settings from Supabase database."""
+    def _load_db_settings(self, verbose=False):
+        """Load email settings from Supabase database.
+        
+        Args:
+            verbose: If True, print status messages. False by default to reduce spam.
+        """
         try:
-            # Import supabase client from mqtt_to_supabase context
+            # Import supabase client
             from supabase import create_client
             
             supabase_url = os.getenv("SUPABASE_URL")
             supabase_key = os.getenv("SUPABASE_KEY")
             
             if not supabase_url or not supabase_key:
-                return
+                return False
             
+            # Create client (could cache this but keep simple for now)
             client = create_client(supabase_url, supabase_key)
             result = client.table('email_settings').select('*').limit(1).execute()
             
             if result.data and len(result.data) > 0:
                 settings = result.data[0]
+                old_enabled = self._db_enabled
+                
                 self._db_enabled = settings.get('enabled', True)
                 self._db_recipient = settings.get('recipient_email')
                 self._db_cooldown = settings.get('cooldown_seconds')
                 self._settings_loaded = True
                 
-                if not self._db_enabled:
-                    print("📧 Email notifications disabled via dashboard settings")
-                elif self._db_recipient:
-                    print(f"📧 Using dashboard email settings (recipient: {self._db_recipient})")
+                # Only log when settings change
+                if verbose or old_enabled != self._db_enabled:
+                    if not self._db_enabled:
+                        print("📧 Email notifications DISABLED via dashboard")
+                    else:
+                        print(f"📧 Email notifications ENABLED → {self._db_recipient or self.to_email}")
+                
+                return True
                     
         except Exception as e:
-            # Table might not exist - fall back to env vars
-            print(f"📧 Using environment variable settings (DB: {e})")
+            if verbose:
+                print(f"📧 Using env settings (DB unavailable: {type(e).__name__})")
+            return False
     
     def _get_recipient(self) -> Optional[str]:
         """Get recipient email, preferring DB settings over env var."""

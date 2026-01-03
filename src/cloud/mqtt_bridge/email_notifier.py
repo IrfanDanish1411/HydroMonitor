@@ -14,7 +14,7 @@ try:
     RESEND_AVAILABLE = True
 except ImportError:
     RESEND_AVAILABLE = False
-    print("⚠️  Resend not installed. Email notifications disabled.")
+    print("[WARNING] Resend not installed. Email notifications disabled.")
     print("   Install with: pip install resend")
 
 
@@ -68,7 +68,7 @@ class EmailNotifier:
             return
             
         if not self.api_key:
-            print("⚠️  RESEND_API_KEY not set. Email notifications disabled.")
+            print("[WARNING] RESEND_API_KEY not set. Email notifications disabled.")
             self.enabled = False
             return
         
@@ -82,9 +82,9 @@ class EmailNotifier:
         if self.enabled:
             recipient = self._get_recipient()
             if recipient:
-                print(f"✅ Email notifications enabled. Alerts will be sent to: {recipient}")
+                print(f"[OK] Email notifications enabled. Alerts will be sent to: {recipient}")
             else:
-                print("⚠️  No recipient email configured. Set ALERT_EMAIL_TO or configure in dashboard.")
+                print("[WARNING] No recipient email configured. Set ALERT_EMAIL_TO or configure in dashboard.")
     
     def _load_db_settings(self, verbose=False):
         """Load email settings from Supabase database.
@@ -118,15 +118,15 @@ class EmailNotifier:
                 # Only log when settings change
                 if verbose or old_enabled != self._db_enabled:
                     if not self._db_enabled:
-                        print("📧 Email notifications DISABLED via dashboard")
+                        print("[EMAIL] Email notifications DISABLED via dashboard")
                     else:
-                        print(f"📧 Email notifications ENABLED → {self._db_recipient or self.to_email}")
+                        print(f"[EMAIL] Email notifications ENABLED -> {self._db_recipient or self.to_email}")
                 
                 return True
                     
         except Exception as e:
             if verbose:
-                print(f"📧 Using env settings (DB unavailable: {type(e).__name__})")
+                print(f"[EMAIL] Using env settings (DB unavailable: {type(e).__name__})")
             return False
     
     def _get_recipient(self) -> Optional[str]:
@@ -298,14 +298,14 @@ class EmailNotifier:
         # Get recipient
         recipient = self._get_recipient()
         if not recipient:
-            print("📧 No recipient email configured")
+            print("[EMAIL] No recipient email configured")
             return False
         
         # Check rate limit
         if not self._can_send(parameter):
             cooldown = self._get_cooldown()
             remaining = cooldown - (time.time() - self._last_sent.get(parameter, 0))
-            print(f"📧 Email for {parameter} skipped (cooldown: {int(remaining)}s remaining)")
+            print(f"[EMAIL] Email for {parameter} skipped (cooldown: {int(remaining)}s remaining)")
             return False
         
         try:
@@ -321,18 +321,18 @@ class EmailNotifier:
             response = resend.Emails.send({
                 "from": self.from_email,
                 "to": [recipient],
-                "subject": f"⚠️ Water Quality Alert: {param_name} = {value}{unit}",
+                "subject": f"[ALERT] Water Quality Alert: {param_name} = {value}{unit}",
                 "html": html_body
             })
             
             # Update rate limit tracker
             self._last_sent[parameter] = time.time()
             
-            print(f"📧 Alert email sent for {parameter} → {recipient}")
+            print(f"[EMAIL] Alert email sent for {parameter} -> {recipient}")
             return True
             
         except Exception as e:
-            print(f"❌ Failed to send email alert: {e}")
+            print(f"[ERROR] Failed to send email alert: {e}")
             return False
 
 
@@ -356,11 +356,11 @@ def send_alert_email(parameter: str, value: float, min_val: float,
 
 def send_test_email():
     """Send a test email to verify configuration."""
-    print("\n🧪 Sending test email...")
+    print("\n[TEST] Sending test email...")
     notifier = get_notifier()
     
     if not notifier.enabled:
-        print("❌ Email notifications are not enabled. Check your configuration.")
+        print("[ERROR] Email notifications are not enabled. Check your configuration.")
         return False
     
     # Send test with sample data
@@ -374,9 +374,9 @@ def send_test_email():
     )
     
     if success:
-        print("✅ Test email sent successfully!")
+        print("[OK] Test email sent successfully!")
     else:
-        print("❌ Failed to send test email.")
+        print("[ERROR] Failed to send test email.")
     
     return success
 

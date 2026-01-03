@@ -13,6 +13,7 @@ import PWAPrompt from './components/PWAPrompt'
 import LandingPage from './components/LandingPage'
 import Documentation from './components/Documentation'
 import ThresholdManager from './components/ThresholdManager'
+import EmailSettings from './components/EmailSettings'
 import DailyChecklist from './components/DailyChecklist'
 import MaintenanceSchedule from './components/MaintenanceSchedule'
 import FloatingFish from './components/FloatingFish'
@@ -320,6 +321,7 @@ function App() {
           {/* SETTINGS TAB - Threshold Configuration */}
           {activeTab === 'settings' && (
             <div className="settings-tab">
+              <EmailSettings />
               <ThresholdManager readings={readings} />
             </div>
           )}

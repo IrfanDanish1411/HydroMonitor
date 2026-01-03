@@ -9,6 +9,9 @@ from datetime import datetime
 # Load environment variables
 load_dotenv()
 
+# Import email notifier (optional - gracefully handles if not configured)
+from email_notifier import send_alert_email
+
 # Supabase setup
 supabase_url = os.getenv("SUPABASE_URL")
 supabase_key = os.getenv("SUPABASE_KEY")
@@ -53,6 +56,10 @@ def check_thresholds(data):
                 }).execute()
                 
                 print(f"⚠️  ALERT TRIGGERED: {param} = {value} (Limits: {min_val}-{max_val}) | Severity: {severity.upper()}")
+                
+                # Send email notification
+                send_alert_email(param, value, min_val, max_val, severity, device_id)
+                
             except Exception as e:
                 print(f"❌ Error creating alert: {e}")
 

@@ -88,7 +88,25 @@ export default function WeatherWidget() {
         )
     }
 
-    if (!weather) return null
+    if (!weather) {
+        return (
+            <div className="weather-widget card">
+                <div className="weather-header">
+                    <Cloud size={24} />
+                    <div>
+                        <h3>Weather Conditions</h3>
+                        <div className="weather-location">
+                            <MapPin size={12} />
+                            <span>{location}</span>
+                        </div>
+                    </div>
+                </div>
+                <div className="weather-loading">
+                    Unable to load weather data. Check your internet connection.
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="weather-widget card">

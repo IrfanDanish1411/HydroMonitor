@@ -165,7 +165,7 @@ void loop() {
     phSum += analogRead(PH_PIN); 
     delay(2); 
   }
-  float phValue = ((phSum / 40.0 / ADC_MAX) * VREF * -5.70) + PH_OFFSET; 
+  float phValue = ((phSum / 40.0 / ADC_MAX) * VREF * 5.70) + PH_OFFSET; 
 
   // ==========================================
   // THRESHOLD LOGIC & PUMP CONTROL

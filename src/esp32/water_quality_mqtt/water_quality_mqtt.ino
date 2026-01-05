@@ -11,7 +11,7 @@ const char* password = "aksesg31"; // e.g., "MyPassword123"
 
 // ---------- MQTT BROKER SETTINGS ----------
 // TODO: Replace with your GCP VM's EXTERNAL IP address!
-const char* mqtt_server = "34.123.3.3";  // e.g., "34.101.123.45" (find in GCP Console)
+const char* mqtt_server = "136.119.69.150";
 const int mqtt_port = 1883;
 const char* mqtt_topic = "water-quality/sensor-data";
 const char* device_id = "esp32-001";
@@ -165,7 +165,7 @@ void loop() {
     phSum += analogRead(PH_PIN); 
     delay(2); 
   }
-  float phValue = ((phSum / 40.0 / ADC_MAX) * VREF * 5.70) + PH_OFFSET; 
+  float phValue = ((phSum / 40.0 / ADC_MAX) * VREF * -5.70) + PH_OFFSET; 
 
   // ==========================================
   // THRESHOLD LOGIC & PUMP CONTROL
